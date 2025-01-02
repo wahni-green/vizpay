@@ -54,3 +54,19 @@ def pretty_json(obj):
 		return obj
 
 	return frappe.as_json(obj, indent=4)
+
+
+def log_and_structure(func):
+    def wrapper(*args, **kwargs):
+        cmd = kwargs.get("cmd")
+        try:
+            kwargs = frappe.get_newargs(func, kwargs)
+            return {"status": True, "message": func(*args, **kwargs)}
+        except Exception as e:
+            frappe.log_error(
+                title=f"Vizpay API Error: {cmd or func.__name__}",
+                message=frappe.get_traceback(),
+            )
+            return {"status": False, "error": str(e)}
+
+    return wrapper
