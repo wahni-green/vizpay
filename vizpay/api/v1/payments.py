@@ -33,7 +33,22 @@ def get_pending_transactions():
     return frappe.get_list(
         "Vizpay Transaction",
         filters={"status": "Pending"},
-        fields=["name", "amount", "terminal", "bill_no"],
+        fields=["name", "amount", "terminal", "bill_no", "customer"],
+    )
+
+
+@frappe.whitelist(methods=["GET"])
+@log_and_structure
+def get_transactions(filters=None, start=0, limit=20):
+    if not filters:
+        filters = {}
+
+    return frappe.get_list(
+        "Vizpay Transaction",
+        filters=filters,
+        fields=["name", "amount", "terminal", "bill_no", "customer"],
+        start=start,
+        page_length=limit,
     )
 
 
