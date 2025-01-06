@@ -41,3 +41,9 @@ def get_pending_transactions():
 @log_and_structure
 def check_transaction_status(transaction_id):
     return frappe.db.get_value("Vizpay Transaction", transaction_id, "status")
+
+
+@frappe.whitelist(methods=["GET"])
+@log_and_structure
+def get_terminals():
+    return frappe.db.get_all("Vizpay Terminal", pluck="name")
