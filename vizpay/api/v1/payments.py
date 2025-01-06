@@ -47,6 +47,7 @@ def get_transactions(filters=None, start=0, limit=20):
         "Vizpay Transaction",
         filters=filters,
         fields=["name", "amount", "terminal", "bill_no", "customer"],
+        order_by="creation desc",
         start=start,
         page_length=limit,
     )
