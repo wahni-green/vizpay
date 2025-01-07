@@ -46,7 +46,10 @@ def get_transactions(filters=None, start=0, limit=20):
     return frappe.get_list(
         "Vizpay Transaction",
         filters=filters,
-        fields=["name", "amount", "terminal", "bill_no", "customer"],
+        fields=[
+            "name", "amount", "terminal",
+            "bill_no", "customer", "status"
+        ],
         order_by="creation desc",
         start=start,
         page_length=limit,
