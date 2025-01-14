@@ -18,7 +18,7 @@ def create_transaction(customer, amount, terminal, bill_no):
         }
     )
     transaction.insert(ignore_permissions=True)
-    return transaction
+    return "Transaction Initiated Successfully"
 
 
 @frappe.whitelist(methods=["GET"])
