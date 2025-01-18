@@ -59,12 +59,12 @@ def log_and_structure(func):
         cmd = kwargs.get("cmd")
         try:
             kwargs = frappe.get_newargs(func, kwargs)
-            return {"status": True, "message": func(*args, **kwargs)}
+            return {"status": True, "message": func(*args, **kwargs), "success": True}
         except Exception as e:
             frappe.log_error(
                 title=f"Vizpay API Error: {cmd or func.__name__}",
                 message=frappe.get_traceback(),
             )
-            return {"status": False, "error": str(e)}
+            return {"status": False, "error": str(e), "success": False}
 
     return wrapper
