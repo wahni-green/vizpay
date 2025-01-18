@@ -21,15 +21,13 @@ class Vizpay:
             "bill_no": str(transaction.bill_no or ""),
             "tip": transaction.tip,
             "erp_tran_id": transaction.name,
-            "erp_client_id": "ajshdsbdchsallje29ewurfhdjcm",
-            "source_id":"ajshdsbdchsallje29ewurfhdjcm",
+            "erp_client_id": self.settings.source_id,
+            "source_id": self.settings.source_id,
         }
 
         url = f"{self.settings.base_url}/erpservice/ERP/PushTxn"
         response = requests.post(url, json=payload)
-        frappe.msgprint(
-            str(response.json()), title="Vizpay Transaction Response"
-        )
+        return response.json()
 
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])

@@ -8,6 +8,7 @@
   "enabled",
   "section_break_vbhv",
   "base_url",
+  "source_id",
   "column_break_fggy",
   "merchant_id",
   "transaction_type"
@@ -41,12 +42,17 @@
    "fieldname": "transaction_type",
    "fieldtype": "Int",
    "label": "Transaction Type"
+  },
+  {
+   "fieldname": "source_id",
+   "fieldtype": "Data",
+   "label": "Source ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-10-22 15:19:49.877131",
+ "modified": "2025-01-18 11:03:04.850841",
  "modified_by": "Administrator",
  "module": "Vizpay",
  "name": "Vizpay Settings",

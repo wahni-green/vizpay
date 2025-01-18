@@ -9,7 +9,8 @@ from vizpay.utils import Vizpay
 class VizpayTransaction(Document):
 	def validate(self):
 		vizpay = Vizpay()
-		vizpay.push_transaction(self)
+		resp = vizpay.push_transaction(self)
+		self.add_comment(text=str(resp))
 		self.status = "Pending"
 
 	def update_transaction_status(self, response):
