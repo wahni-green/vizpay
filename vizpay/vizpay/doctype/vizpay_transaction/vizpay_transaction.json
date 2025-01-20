@@ -8,12 +8,14 @@
   "section_break_168p",
   "naming_series",
   "customer",
+  "bill_no",
   "amount",
   "tip",
   "column_break_erdo",
   "status",
   "terminal",
-  "bill_no",
+  "merchant_id",
+  "transaction_type",
   "section_break_qngg",
   "response"
  ],
@@ -81,11 +83,27 @@
    "fieldname": "tip",
    "fieldtype": "Currency",
    "label": "Tip"
+  },
+  {
+   "fetch_from": "terminal.merchant_id",
+   "fieldname": "merchant_id",
+   "fieldtype": "Data",
+   "label": "Merchant ID",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "default": "16",
+   "fieldname": "transaction_type",
+   "fieldtype": "Int",
+   "label": "Payment Type",
+   "non_negative": 1,
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-22 15:21:28.678220",
+ "modified": "2025-01-20 12:25:28.379921",
  "modified_by": "Administrator",
  "module": "Vizpay",
  "name": "Vizpay Transaction",

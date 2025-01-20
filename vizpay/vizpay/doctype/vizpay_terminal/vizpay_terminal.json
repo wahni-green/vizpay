@@ -8,6 +8,7 @@
  "field_order": [
   "terminal_id",
   "column_break_rwng",
+  "merchant_id",
   "user"
  ],
  "fields": [
@@ -28,11 +29,17 @@
    "fieldtype": "Link",
    "label": "User",
    "options": "User"
+  },
+  {
+   "fieldname": "merchant_id",
+   "fieldtype": "Data",
+   "label": "Merchant ID",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-22 15:18:42.890353",
+ "modified": "2025-01-20 12:23:48.995413",
  "modified_by": "Administrator",
  "module": "Vizpay",
  "name": "Vizpay Terminal",

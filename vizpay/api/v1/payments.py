@@ -7,7 +7,7 @@ from vizpay.utils import log_and_structure
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @log_and_structure
-def create_transaction(customer, amount, terminal, bill_no):
+def create_transaction(customer, amount, terminal, bill_no, pay_type=1):
     transaction = frappe.get_doc(
         {
             "doctype": "Vizpay Transaction",
@@ -15,6 +15,7 @@ def create_transaction(customer, amount, terminal, bill_no):
             "amount": amount,
             "terminal": terminal,
             "bill_no": bill_no,
+            "pay_type": pay_type,
         }
     )
     transaction.insert(ignore_permissions=True)

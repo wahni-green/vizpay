@@ -14,9 +14,9 @@ class Vizpay:
 
     def push_transaction(self, transaction):
         payload = {
-            "mid": self.settings.merchant_id,
+            "mid": transaction.merchant_id,
             "tid": transaction.terminal,
-            "tran_type": self.settings.transaction_type,
+            "tran_type": transaction.transaction_type,
             "amount": transaction.amount,
             "bill_no": str(transaction.bill_no or ""),
             "tip": transaction.tip,
