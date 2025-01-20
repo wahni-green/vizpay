@@ -15,7 +15,7 @@ def create_transaction(customer, amount, terminal, bill_no, pay_type=1):
             "amount": amount,
             "terminal": terminal,
             "bill_no": bill_no,
-            "pay_type": pay_type,
+            "transaction_type": pay_type,
         }
     )
     transaction.insert(ignore_permissions=True)
