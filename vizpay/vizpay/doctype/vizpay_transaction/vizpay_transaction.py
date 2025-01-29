@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 # import frappe
+import json
 from frappe.model.document import Document
 from vizpay.utils import Vizpay
 
@@ -17,6 +18,7 @@ class VizpayTransaction(Document):
 
 	def update_transaction_status(self, response):
 		self.response = response
+		response = json.loads(response)
 		if response.get("TxnStatus") == "SUCCESS":
 			self.status = "Success"
 		else:
