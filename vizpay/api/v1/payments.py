@@ -57,10 +57,12 @@ def get_transactions(filters=None, start=0, limit=20):
     )
 
 
-@frappe.whitelist(methods=["GET"])
+@frappe.whitelist(methods=["POST"])
 @log_and_structure
 def check_transaction_status(transaction_id):
-    return frappe.db.get_value("Vizpay Transaction", transaction_id, "status")
+    doc = frappe.get_doc("Vizpay Transaction", transaction_id)
+    doc.fetch_transaction_status()
+    return doc.status
 
 
 @frappe.whitelist(methods=["GET"])
