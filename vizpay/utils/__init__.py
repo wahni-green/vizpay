@@ -29,6 +29,21 @@ class Vizpay:
         response = requests.post(url, json=payload)
         return response.json()
 
+    def get_transaction_status(self, transaction):
+        payload = {
+            "mid": transaction.merchant_id,
+            "tid": transaction.terminal,
+            "bill_no": str(transaction.bill_no or ""),
+            "tran_type": transaction.transaction_type,
+            "erp_tran_id": transaction.name,
+            "erp_client_id": self.settings.source_id,
+            "source_id": self.settings.source_id,
+        }
+
+        url = f"{self.settings.base_url}/erpservice/ERP/CallbackStatusCheck"
+        response = requests.post(url, json=payload)
+        return response.json()
+
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 def update_transaction_status(**kwargs):
