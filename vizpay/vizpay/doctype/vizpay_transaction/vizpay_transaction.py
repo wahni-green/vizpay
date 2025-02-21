@@ -10,7 +10,7 @@ from frappe.model.document import Document
 from erpnext import get_default_company
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.doctype.payment_entry.payment_entry import (
-    get_bank_cash_account,
+	get_bank_cash_account,
 )
 
 from vizpay.utils import Vizpay, pretty_json
@@ -56,6 +56,11 @@ class VizpayTransaction(Document):
 		):
 			return
 
+		is_frozen = frappe.db.get_value("Customer", self.customer, "is_frozen")
+
+		if is_frozen:
+			frappe.db.set_value("Customer", self.customer, "is_frozen", 0)
+
 		payment_entry = frappe.new_doc("Payment Entry")
 		payment_entry.payment_type = "Receive"
 		payment_entry.posting_date = today()
@@ -82,3 +87,6 @@ class VizpayTransaction(Document):
 		payment_entry.save()
 
 		payment_entry.submit()
+
+		if is_frozen:
+			frappe.db.set_value("Customer", self.customer, "is_frozen", 1)
