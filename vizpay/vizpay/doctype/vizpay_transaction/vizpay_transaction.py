@@ -18,7 +18,9 @@ from vizpay.utils import Vizpay, pretty_json
 
 class VizpayTransaction(Document):
 	def validate(self):
-		self.status = "Pending"
+		if self.is_new():
+			self.status = "Pending"
+		self.bill_no = self.name
 
 	def after_insert(self):
 		vizpay = Vizpay()
