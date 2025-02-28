@@ -86,8 +86,9 @@ class VizpayTransaction(Document):
 
 		payment_entry.setup_party_account_field()
 		payment_entry.set_missing_values()
-		payment_entry.save()
 
+		payment_entry.flags.ignore_permissions = True
+		payment_entry.save()
 		payment_entry.submit()
 
 		if is_frozen:
