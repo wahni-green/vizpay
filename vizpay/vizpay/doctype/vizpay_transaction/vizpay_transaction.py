@@ -39,12 +39,13 @@ class VizpayTransaction(Document):
 		response = json.loads(response)
 		if response.get("ResponseCode") == "00":
 			self.status = "Success"
-			self.mark_payment_as_complete()
+			reference_no = response.get("RspData", {}).get("TranId")
+			self.mark_payment_as_complete(reference_no)
 		else:
 			self.status = "Failed"
 		self.db_update()
 
-	def mark_payment_as_complete(self):
+	def mark_payment_as_complete(self, reference_no=None):
 		if frappe.db.get_value(
 			"Payment Entry",
 			{
@@ -81,7 +82,8 @@ class VizpayTransaction(Document):
 		payment_entry.paid_from = party_account
 		payment_entry.paid_to = bank.account
 
-		payment_entry.reference_no = self.name
+		payment_entry.vizpay_transaction = self.name
+		payment_entry.reference_no = reference_no or self.name
 		payment_entry.reference_date = payment_entry.posting_date
 
 		payment_entry.setup_party_account_field()
