@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "terminal_id",
+  "terminal_name",
   "column_break_rwng",
   "merchant_id",
   "user"
@@ -27,6 +28,7 @@
   {
    "fieldname": "user",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "User",
    "options": "User"
   },
@@ -35,11 +37,18 @@
    "fieldtype": "Data",
    "label": "Merchant ID",
    "reqd": 1
+  },
+  {
+   "fieldname": "terminal_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Terminal Name",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-20 12:23:48.995413",
+ "modified": "2025-03-10 14:36:42.967377",
  "modified_by": "Administrator",
  "module": "Vizpay",
  "name": "Vizpay Terminal",
