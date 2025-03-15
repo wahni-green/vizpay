@@ -8,4 +8,4 @@ from vizpay.utils import log_and_structure
 @frappe.whitelist(methods=["GET"])
 @log_and_structure
 def get_terminals():
-    return frappe.db.get_all("Vizpay Terminal", fields=["name", "terminal_name"])
+    return frappe.db.get_list("Vizpay Terminal", fields=["name", "terminal_name"])
