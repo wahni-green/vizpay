@@ -3,9 +3,18 @@
 
 frappe.listview_settings["Vizpay Transaction"] = {
     onload: function(listview) {
+        frappe.realtime.on('rq_job_error', (data) => {
+            if (data) {
+                frappe.throw(__(
+                    `Background Job for Fetching Status(s) Failed.
+                    Please Check Error Log for More Details.`
+                ))
+            }
+        })
         listview.page.add_action_item(__("Fetch Statuses"), () => {
             let checked_items = listview.get_checked_items()
             if (checked_items[0]) {
+                frappe
                 frappe.confirm(
                     __("Fetch Status of {0} Vizpay Transaction(s)?", [checked_items.length]), () => {
                         frappe.call({
@@ -14,6 +23,11 @@ frappe.listview_settings["Vizpay Transaction"] = {
                                 "transactions": checked_items,
                                 "doctype": listview.doctype,
                             },
+                            callback: function(r) {
+                                if (!r) {
+                                    frappe.realtime.off("rq_job_error")
+                                }
+                            }
                         })
                     }
                 )

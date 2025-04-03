@@ -34,4 +34,9 @@ def fetch_statuses_in_background(transactions, doctype):
 
 def fetch_status(transaction_name):
 	doc = frappe.get_doc("Vizpay Transaction", transaction_name)
-	doc.fetch_transaction_status()
+	try:
+		status = doc.fetch_transaction_status()
+	except Exception as e:
+		frappe.log_error("Bulk Status Fetching Failed!", frappe.get_traceback())
+		return 1
+	
