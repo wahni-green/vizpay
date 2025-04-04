@@ -8,38 +8,32 @@ from frappe import _
 def fetch_statuses_in_background(transactions, doctype):
 	transactions = frappe.parse_json(transactions)
 	progress = 1
-	error = 0
 	completion = len(transactions)
 	frappe.msgprint(
-		_("Creating A Background Job to Fetch {0} Status(s)").format(len(transactions)),
+		_("Creating Background Jobs to Fetch Status of {0} Transactions").format(len(transactions)),
 		alert=True
 	)
 
+	# enqueue fetching status
 	for transaction in transactions:
-		try:
-			frappe.enqueue(
-				method=fetch_status,
-				queue="default",
-				transaction_name=transaction.get("name", None)
-			)
-			percentage = (progress/completion) * 100
-			frappe.publish_progress(
-				percentage,
-				title="Fetching Status(s)",
-				description=f"Row #{progress}: Fetching Status",
-				doctype=doctype
-			)
-			progress += 1
-		except Exception:
-			error = 1
-			frappe.publish_realtime("rq_job_error", {"data":error})
-			break
-	
+		frappe.enqueue(
+			method=fetch_status,
+			queue="default",
+			transaction_name=transaction.get("name", None),
+		)
+		# display percentage of completion
+		percentage = (progress/completion) * 100
+		frappe.publish_progress(
+			percentage,
+			title="Fetching Status(s)",
+			description=f"Row #{progress}: Fetching Status",
+			doctype=doctype,
+		)
+		progress += 1
+
 	progress = 1
-	return error
 
 
 def fetch_status(transaction_name):
 	doc = frappe.get_doc("Vizpay Transaction", transaction_name)
-	status = doc.fetch_transaction_status()
-	
+	doc.fetch_transaction_status()
