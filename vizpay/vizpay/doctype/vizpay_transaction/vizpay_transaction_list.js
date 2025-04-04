@@ -14,7 +14,6 @@ frappe.listview_settings["Vizpay Transaction"] = {
         listview.page.add_action_item(__("Fetch Statuses"), () => {
             let checked_items = listview.get_checked_items()
             if (checked_items[0]) {
-                frappe
                 frappe.confirm(
                     __("Fetch Status of {0} Vizpay Transaction(s)?", [checked_items.length]), () => {
                         frappe.call({
@@ -24,7 +23,7 @@ frappe.listview_settings["Vizpay Transaction"] = {
                                 "doctype": listview.doctype,
                             },
                             callback: function(r) {
-                                if (!r) {
+                                if (r.message.error == 0) {
                                     frappe.realtime.off("rq_job_error")
                                 }
                             }

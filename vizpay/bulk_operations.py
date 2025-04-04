@@ -8,6 +8,7 @@ from frappe import _
 def fetch_statuses_in_background(transactions, doctype):
 	transactions = frappe.parse_json(transactions)
 	progress = 1
+	error = 0
 	completion = len(transactions)
 	frappe.msgprint(
 		_("Creating A Background Job to Fetch {0} Status(s)").format(len(transactions)),
@@ -15,28 +16,29 @@ def fetch_statuses_in_background(transactions, doctype):
 	)
 
 	for transaction in transactions:
-		frappe.enqueue(
-			method=fetch_status,
-			queue="default",
-			transaction_name=transaction.get("name", None)
-		)
-		percentage = (progress/completion) * 100
-		frappe.publish_progress(
-			percentage,
-			title="Fetching Status(s)",
-			description=f"Row #{progress}: Fetching Status",
-			doctype=doctype
-		)
-		progress += 1
-
+		try:
+			frappe.enqueue(
+				method=fetch_status,
+				queue="default",
+				transaction_name=transaction.get("name", None)
+			)
+			percentage = (progress/completion) * 100
+			frappe.publish_progress(
+				percentage,
+				title="Fetching Status(s)",
+				description=f"Row #{progress}: Fetching Status",
+				doctype=doctype
+			)
+			progress += 1
+		except Exception:
+			error = 1
+			frappe.publish_realtime("rq_job_error", {"data":error})
+	
 	progress = 1
+	return error
 
 
 def fetch_status(transaction_name):
 	doc = frappe.get_doc("Vizpay Transaction", transaction_name)
-	try:
-		status = doc.fetch_transaction_status()
-	except Exception as e:
-		frappe.log_error("Bulk Status Fetching Failed!", frappe.get_traceback())
-		return 1
+	status = doc.fetch_transaction_status()
 	
