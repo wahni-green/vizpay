@@ -31,8 +31,15 @@ def fetch_statuses_in_background(transactions, doctype):
 			)
 			progress += 1
 		except Exception:
+			frappe.publish_progress(
+				100,
+				title="ERROR",
+				description="ERROR",
+				doctype=doctype
+			)
 			error = 1
 			frappe.publish_realtime("rq_job_error", {"data":error})
+			break
 	
 	progress = 1
 	return error
