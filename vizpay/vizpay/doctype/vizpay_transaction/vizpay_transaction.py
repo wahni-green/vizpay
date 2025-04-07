@@ -98,7 +98,6 @@ class VizpayTransaction(Document):
 			frappe.db.set_value("Customer", self.customer, "is_frozen", 1)
 
 
-
 @frappe.whitelist()
 def fetch_statuses_in_background(transactions, doctype):
 	transactions = frappe.parse_json(transactions)
@@ -129,11 +128,6 @@ def fetch_statuses_in_background(transactions, doctype):
 	progress = 1
 
 
-def fetch_status(transaction_name):
-	doc = frappe.get_doc("Vizpay Transaction", transaction_name)
-	doc.fetch_transaction_status()
-
-
 # Scheduler Job set to fetch status of pending Transactions
 def fetch_status_for_pending():
 	pending_transactions = frappe.db.get_all("Vizpay Transaction", {"status": "Pending"})
@@ -147,3 +141,8 @@ def fetch_status_for_pending():
 			queue="default",
 			transaction_name=transaction.get("name", None),
 		)
+
+
+def fetch_status(transaction_name):
+	doc = frappe.get_doc("Vizpay Transaction", transaction_name)
+	doc.fetch_transaction_status()
