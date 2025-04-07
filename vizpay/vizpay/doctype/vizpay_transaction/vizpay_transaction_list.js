@@ -9,7 +9,7 @@ frappe.listview_settings["Vizpay Transaction"] = {
 				frappe.confirm(
 					__("Fetch Status of {0} Vizpay Transaction(s)?", [checked_items.length]), () => {
 						frappe.call({
-							method: "vizpay.bulk_operations.fetch_statuses_in_background",
+							method: "vizpay.vizpay.doctype.vizpay_transaction.vizpay_transaction.fetch_statuses_in_background",
 							args: {
 								"transactions": checked_items,
 								"doctype": listview.doctype,
