@@ -166,6 +166,13 @@ app_license = "agpl-3.0"
 # 	],
 # }
 
+scheduler_events = {
+	"hourly_long": [
+		"vizpay.bulk_transactions.fetch_status_for_pending"
+	],
+}
+
+
 # Testing
 # -------
 

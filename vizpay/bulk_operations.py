@@ -37,3 +37,17 @@ def fetch_statuses_in_background(transactions, doctype):
 def fetch_status(transaction_name):
 	doc = frappe.get_doc("Vizpay Transaction", transaction_name)
 	doc.fetch_transaction_status()
+
+
+def fetch_status_for_pending():
+	pending_transactions = frappe.db.get_all("Vizpay Transaction", {"status": "Pending"})
+
+	if not pending_transactions:
+		return
+
+	for transaction in pending_transactions:
+		frappe.enqueue(
+			method=fetch_status,
+			queue="default",
+			transaction_name=transaction.get("name", None),
+		)
