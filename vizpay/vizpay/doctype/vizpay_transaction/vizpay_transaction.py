@@ -98,7 +98,6 @@ class VizpayTransaction(Document):
 			frappe.db.set_value("Customer", self.customer, "is_frozen", 1)
 
 
-
 @frappe.whitelist()
 def fetch_statuses_in_background(transactions):
 	transactions = frappe.parse_json(transactions)
