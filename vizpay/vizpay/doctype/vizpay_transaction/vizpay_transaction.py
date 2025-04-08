@@ -4,7 +4,8 @@
 import json
 
 import frappe
-from frappe.utils import today
+from frappe import _
+from frappe.utils import today, create_batch
 from frappe.model.document import Document
 
 from erpnext import get_default_company
@@ -95,3 +96,43 @@ class VizpayTransaction(Document):
 
 		if is_frozen:
 			frappe.db.set_value("Customer", self.customer, "is_frozen", 1)
+
+
+@frappe.whitelist()
+def fetch_statuses_in_background(transactions):
+	transactions = frappe.parse_json(transactions)
+	frappe.msgprint(
+		_("Creating Background Jobs to Fetch Status of ({}) Transactions").format(len(transactions)),
+		alert=True
+	)
+	batch_list = create_batch(transactions, 25)
+
+	# enqueue fetching status
+	for batch in batch_list:
+		frappe.enqueue(
+			method=fetch_statuses,
+			queue="long",
+			transaction_batch=batch,
+		)
+
+
+# Scheduler Job set to fetch status of pending Transactions
+def fetch_status_for_pending():
+	pending_transactions = frappe.db.get_all("Vizpay Transaction", {"status": "Pending"})
+	batch_list = create_batch(pending_transactions, 25)
+
+	if not pending_transactions:
+		return
+
+	for batch in batch_list:
+		frappe.enqueue(
+			method=fetch_statuses,
+			queue="long",
+			transaction_batch=batch,
+		)
+
+
+def fetch_statuses(transaction_batch):
+	for transaction in transaction_batch:
+		doc = frappe.get_doc("Vizpay Transaction", transaction.get("name"))
+		doc.fetch_transaction_status()
