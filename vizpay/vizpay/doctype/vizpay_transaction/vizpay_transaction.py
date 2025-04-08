@@ -116,12 +116,6 @@ def fetch_statuses_in_background(transactions):
 		)
 
 
-def fetch_statuses(transaction_batch):
-	for transaction in transaction_batch:
-		doc = frappe.get_doc("Vizpay Transaction", transaction.name)
-		doc.fetch_transaction_status()
-
-
 # Scheduler Job set to fetch status of pending Transactions
 def fetch_status_for_pending():
 	pending_transactions = frappe.db.get_all("Vizpay Transaction", {"status": "Pending"})
@@ -136,3 +130,9 @@ def fetch_status_for_pending():
 			queue="default",
 			transaction_batch=batch,
 		)
+
+
+def fetch_statuses(transaction_batch):
+	for transaction in transaction_batch:
+		doc = frappe.get_doc("Vizpay Transaction", transaction.name)
+		doc.fetch_transaction_status()
