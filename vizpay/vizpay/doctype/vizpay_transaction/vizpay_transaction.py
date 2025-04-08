@@ -111,7 +111,7 @@ def fetch_statuses_in_background(transactions):
 	for batch in batch_list:
 		frappe.enqueue(
 			method=fetch_statuses,
-			queue="default",
+			queue="long",
 			transaction_batch=batch,
 		)
 
@@ -127,12 +127,12 @@ def fetch_status_for_pending():
 	for batch in batch_list:
 		frappe.enqueue(
 			method=fetch_statuses,
-			queue="default",
+			queue="long",
 			transaction_batch=batch,
 		)
 
 
 def fetch_statuses(transaction_batch):
 	for transaction in transaction_batch:
-		doc = frappe.get_doc("Vizpay Transaction", transaction.name)
+		doc = frappe.get_doc("Vizpay Transaction", transaction.get("name"))
 		doc.fetch_transaction_status()
