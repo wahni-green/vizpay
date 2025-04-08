@@ -3,7 +3,7 @@
 
 frappe.listview_settings["Vizpay Transaction"] = {
 	onload: function(listview) {
-		listview.page.add_action_item(__("Fetch Statuses"), () => {
+		listview.page.add_action_item(__("Fetch Status"), () => {
 			let checked_items = listview.get_checked_items()
 			if (checked_items[0]) {
 				frappe.confirm(
