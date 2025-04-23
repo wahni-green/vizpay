@@ -5,7 +5,7 @@ import json
 
 import frappe
 from frappe import _
-from frappe.utils import today, create_batch
+from frappe.utils import today, create_batch, getdate
 from frappe.model.document import Document
 
 from erpnext import get_default_company
@@ -41,12 +41,15 @@ class VizpayTransaction(Document):
 		if response.get("ResponseCode") == "00":
 			self.status = "Success"
 			reference_no = response.get("RspData", {}).get("TranId")
-			self.mark_payment_as_complete(reference_no)
+			txn_completion_date = getdate(
+				response.get("RspData", {}).get("TxnCompletionDate")
+			)
+			self.mark_payment_as_complete(reference_no, txn_completion_date)
 		else:
 			self.status = "Failed"
 		self.db_update()
 
-	def mark_payment_as_complete(self, reference_no=None):
+	def mark_payment_as_complete(self, reference_no=None, txn_completion_date=None):
 		if frappe.db.get_value(
 			"Payment Entry",
 			{
@@ -67,7 +70,7 @@ class VizpayTransaction(Document):
 
 		payment_entry = frappe.new_doc("Payment Entry")
 		payment_entry.payment_type = "Receive"
-		payment_entry.posting_date = today()
+		payment_entry.posting_date = txn_completion_date or today()
 		payment_entry.mode_of_payment = frappe.get_single("Vizpay Settings").mode_of_payment
 		payment_entry.party_type = "Customer"
 		payment_entry.party = self.customer
