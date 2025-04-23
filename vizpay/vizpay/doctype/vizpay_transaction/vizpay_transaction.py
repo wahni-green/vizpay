@@ -43,6 +43,7 @@ class VizpayTransaction(Document):
 			self.mark_payment_as_complete(reference_no)
 		else:
 			self.status = "Failed"
+
 		self.db_update()
 
 	def mark_payment_as_complete(self, reference_no=None):
