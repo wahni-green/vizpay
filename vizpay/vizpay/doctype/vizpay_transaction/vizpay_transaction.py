@@ -40,7 +40,7 @@ class VizpayTransaction(Document):
 		if response.get("ResponseCode") == "00":
 			self.status = "Success"
 			reference_no = response.get("RspData", {}).get("TranId")
-			txn_completion_date = response.get("RspData", {}).get("TxnCompletionDate")
+			txn_completion_date = getdate(response.get("RspData", {}).get("TxnCompletionDate"))
 			self.mark_payment_as_complete(reference_no, txn_completion_date)
 		else:
 			self.status = "Failed"
