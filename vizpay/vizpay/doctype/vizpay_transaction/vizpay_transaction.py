@@ -42,7 +42,7 @@ class VizpayTransaction(Document):
 			self.status = "Success"
 			reference_no = response.get("RspData", {}).get("TranId")
 			txn_completion_date = getdate(
-				response.get("RspData", {}).get("TxnCompletionDate")
+				response.get("RspData", {}).get("TxnCompletionDate"), 1
 			)
 			self.mark_payment_as_complete(reference_no, txn_completion_date)
 		else:
