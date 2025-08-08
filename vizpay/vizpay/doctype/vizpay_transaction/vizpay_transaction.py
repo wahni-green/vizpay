@@ -5,13 +5,14 @@ import json
 
 import frappe
 from frappe import _
-from frappe.utils import today, create_batch, getdate
+from frappe.utils import today, create_batch, getdate, flt
 from frappe.model.document import Document
 
 from erpnext import get_default_company
 from erpnext.accounts.party import get_party_account
 from erpnext.accounts.doctype.payment_entry.payment_entry import (
 	get_bank_cash_account,
+    get_outstanding_reference_documents,
 )
 
 from vizpay.utils import Vizpay, pretty_json
@@ -49,7 +50,9 @@ class VizpayTransaction(Document):
 			self.status = "Failed"
 		self.db_update()
 
-	def mark_payment_as_complete(self, reference_no=None, txn_completion_date=None):
+	def mark_payment_as_complete(
+		self, reference_no=None, txn_completion_date=None, auto_allocate=True
+	):
 		if frappe.db.get_value(
 			"Payment Entry",
 			{
@@ -92,6 +95,33 @@ class VizpayTransaction(Document):
 
 		payment_entry.setup_party_account_field()
 		payment_entry.set_missing_values()
+
+		if auto_allocate:
+			outstanding_docs = get_outstanding_reference_documents(
+				{
+					"posting_date": payment_entry.posting_date,
+					"company": payment_entry.company,
+					"party_type": payment_entry.party_type,
+					"payment_type": payment_entry.payment_type,
+					"party": payment_entry.party,
+					"party_account": payment_entry.paid_from,
+					"cost_center": payment_entry.cost_center,
+				}
+			)
+
+			to_allocate = flt(payment_entry.paid_amount)
+			for out in outstanding_docs:
+				row = payment_entry.append("references", {})
+				row.reference_doctype = out.voucher_type
+				row.reference_name = out.voucher_no
+				row.outstanding_amount = out.outstanding_amount
+				row.allocated_amount = flt(
+					min(to_allocate, out.outstanding_amount)
+				)
+
+				to_allocate -= row.allocated_amount
+				if to_allocate <= 0:
+					break
 
 		payment_entry.flags.ignore_permissions = True
 		payment_entry.save()
