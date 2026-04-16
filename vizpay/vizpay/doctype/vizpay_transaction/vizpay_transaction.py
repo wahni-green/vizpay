@@ -96,6 +96,11 @@ class VizpayTransaction(Document):
 		payment_entry.setup_party_account_field()
 		payment_entry.set_missing_values()
 
+		sales_user = self.owner
+		sales_person = frappe.db.get_value("Sales Person", {"user": sales_user}, "name")
+		if sales_person:
+			payment_entry.sales_person = sales_person
+
 		if auto_allocate:
 			outstanding_docs = get_outstanding_reference_documents(
 				{
