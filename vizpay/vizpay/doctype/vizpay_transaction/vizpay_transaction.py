@@ -172,5 +172,12 @@ def fetch_status_for_pending():
 
 def fetch_statuses(transaction_batch):
 	for transaction in transaction_batch:
-		doc = frappe.get_doc("Vizpay Transaction", transaction.get("name"))
-		doc.fetch_transaction_status()
+		try:
+			doc = frappe.get_doc("Vizpay Transaction", transaction.get("name"))
+			doc.fetch_transaction_status()
+		except Exception as e:
+			frappe.log_error(
+				title=f"[VIZPAY]Error processing {transaction.get('name')}",
+				message=frappe.get_traceback()
+			)
+			raise e
