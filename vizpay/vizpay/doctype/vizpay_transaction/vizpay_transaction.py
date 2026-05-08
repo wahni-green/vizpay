@@ -116,7 +116,7 @@ class VizpayTransaction(Document):
 
 			to_allocate = flt(payment_entry.paid_amount)
 			for out in outstanding_docs:
-				if row.outstanding_amount <= 0:
+				if out.outstanding_amount <= 0:
 					continue
 
 				row = payment_entry.append("references", {})
