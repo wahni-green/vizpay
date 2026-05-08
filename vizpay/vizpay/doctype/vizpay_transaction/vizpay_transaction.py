@@ -116,6 +116,9 @@ class VizpayTransaction(Document):
 
 			to_allocate = flt(payment_entry.paid_amount)
 			for out in outstanding_docs:
+				if row.outstanding_amount <= 0:
+					continue
+
 				row = payment_entry.append("references", {})
 				row.reference_doctype = out.voucher_type
 				row.reference_name = out.voucher_no
@@ -173,6 +176,7 @@ def fetch_status_for_pending():
 def fetch_statuses(transaction_batch):
 	for transaction in transaction_batch:
 		try:
+			frappe.db.commit()
 			doc = frappe.get_doc("Vizpay Transaction", transaction.get("name"))
 			doc.fetch_transaction_status()
 		except Exception as e:
@@ -180,4 +184,4 @@ def fetch_statuses(transaction_batch):
 				title=f"[VIZPAY]Error processing {transaction.get('name')}",
 				message=frappe.get_traceback()
 			)
-			raise e
+			frappe.db.rollback()
